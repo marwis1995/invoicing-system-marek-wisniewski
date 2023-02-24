@@ -65,6 +65,8 @@ checkstyle {
 
 test {
     finalizedBy jacocoTestReport // report is always generated after tests run
+    finalizedBy jacocoTestCoverageVerification
+
 }
 
 jacocoTestReport {
@@ -77,6 +79,7 @@ jacoco {
 }
 
 jacocoTestReport {
+    dependsOn test
     reports {
         xml.required = false
         csv.required = false
