@@ -6,6 +6,7 @@ import pl.futurecollars.invoicing.helpers.TestHelpers
 import pl.futurecollars.invoicing.utils.FilesService
 import pl.futurecollars.invoicing.utils.JsonService
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 
 class FileBasedDatabaseIntegrationTest extends AbstractDatabaseTest {
@@ -31,12 +32,12 @@ class FileBasedDatabaseIntegrationTest extends AbstractDatabaseTest {
         db.save(TestHelpers.invoice(4))
 
         then:
-        1 == Files.readAllLines(dbPath).size()
+        1 == Files.readAllLines(dbPath, StandardCharsets.ISO_8859_1).size()
 
         when:
         db.save(TestHelpers.invoice(5))
 
         then:
-        2 == Files.readAllLines(dbPath).size()
+        2 == Files.readAllLines(dbPath, StandardCharsets.ISO_8859_1).size()
     }
 }
