@@ -14,12 +14,11 @@ import pl.futurecollars.invoicing.service.InvoiceService;
 public class App {
 
   public static void main(String[] args) {
-
     Database db = new InMemoryDatabase();
     InvoiceService service = new InvoiceService(db);
 
     Company buyer = new Company("5213861303", "ul. Bukowińska 24d/7 02-703 Warszawa, Polska", "iCode Trust Sp. z o.o");
-    Company seller = new Company("123-123-11-11", "11-111 Kraków, Testowa 123", "Marek Wiśniewski");
+    Company seller = new Company("552-168-66-00", "32-005 Niepolomice, Nagietkowa 19", "Piotr Kolacz Development");
 
     List<InvoiceEntry> products = List.of(new InvoiceEntry("Programming course", BigDecimal.valueOf(10000), BigDecimal.valueOf(2300), Vat.VAT_23));
 
