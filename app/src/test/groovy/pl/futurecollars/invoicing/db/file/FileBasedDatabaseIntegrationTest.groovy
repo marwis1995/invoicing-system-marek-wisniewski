@@ -6,6 +6,7 @@ import pl.futurecollars.invoicing.helpers.TestHelpers
 import pl.futurecollars.invoicing.utils.FilesService
 import pl.futurecollars.invoicing.utils.JsonService
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 
 class FileBasedDatabaseIntegrationTest extends AbstractDatabaseTest {
