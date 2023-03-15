@@ -41,7 +41,7 @@ public class DatabaseConfiguration {
 
   @ConditionalOnProperty(name = "invoicing-system.database", havingValue = "memory")
   @Bean
-  public Database inMemoryDatabase(){
+  public Database inMemoryDatabase() {
     log.debug("Creating in-memory database");
     return new InMemoryDatabase();
   }
