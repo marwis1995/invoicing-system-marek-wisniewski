@@ -36,10 +36,8 @@ repositories {
     mavenCentral()
 }
 
-java {
+java{
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-        implementation = JvmImplementation.J9
     }
 }
 
