@@ -9,7 +9,9 @@
 buildscript {
     ext {
         lombokVersion = '1.18.22'
+        spockVersion = '2.3-groovy-3.0'
         springBootVersion = '2.4.2'
+        springDependencyManagementVersion = '1.0.11.RELEASE'
     }
 }
 
@@ -26,7 +28,7 @@ plugins {
     id 'jacoco'
 
     id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 repositories {
@@ -43,14 +45,14 @@ java{
 
 
 dependencies {
-    implementation 'org.projectlombok:lombok:1.18.22'
+    implementation "org.projectlombok:lombok:${lombokVersion}"
 
     // Use the latest Groovy version for Spock testing
     testImplementation 'org.codehaus.groovy:groovy:3.0.13'
 
     // Use the awesome Spock testing and specification framework even with Java
-    testImplementation 'org.spockframework:spock-core:2.2-groovy-3.0'
-    testImplementation 'org.spockframework:spock-spring:2.3-groovy-3.0'
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
+    testImplementation "org.spockframework:spock-spring:${spockVersion}"
     testImplementation 'junit:junit:4.13.2'
 
     // This dependency is used by the application.
