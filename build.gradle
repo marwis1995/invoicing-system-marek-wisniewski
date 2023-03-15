@@ -15,7 +15,6 @@ buildscript {
     }
 }
 
-
 plugins {
     // Apply the groovy plugin to also add support for Groovy (needed for Spock)
     id 'groovy'
@@ -35,12 +34,6 @@ repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
-
-java{
-    toolchain {
-    }
-}
-
 
 dependencies {
     implementation "org.projectlombok:lombok:${lombokVersion}"
@@ -134,6 +127,14 @@ jacocoTestCoverageVerification {
             fileTree(dir: it, exclude: 'pl/futurecollars/invoicing/InvoiceApplication.class')
         }))
     }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(15)
+            vendor = JvmVendorSpec.ADOPTOPENJDK
+        }
+    }
+
 }
 
 
