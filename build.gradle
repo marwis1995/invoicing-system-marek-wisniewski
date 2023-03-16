@@ -130,6 +130,8 @@ jacocoTestCoverageVerification {
 
     java {
         toolchain {
+            languageVersion = JavaLanguageVersion.of(15)
+            vendor = JvmVendorSpec.ADOPTOPENJDK
         }
     }
 
