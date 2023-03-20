@@ -35,6 +35,9 @@ plugins {
     id 'java'
 }
 
+group = 'pl.futurecollars'
+version = '0.0.1-SNAPSHOT'
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -42,7 +45,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(15)
+        languageVersion = JavaLanguageVersion.of(14)
         vendor = JvmVendorSpec.ADOPTOPENJDK
     }
 }
