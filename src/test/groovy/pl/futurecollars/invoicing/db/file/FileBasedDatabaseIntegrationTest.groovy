@@ -6,12 +6,12 @@ import pl.futurecollars.invoicing.helpers.TestHelpers
 import pl.futurecollars.invoicing.utils.FilesService
 import pl.futurecollars.invoicing.utils.JsonService
 
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Path
 
 class FileBasedDatabaseIntegrationTest extends AbstractDatabaseTest {
 
-    def dbPath
+    Path dbPath
 
     @Override
     Database getDatabaseInstance() {
@@ -41,3 +41,4 @@ class FileBasedDatabaseIntegrationTest extends AbstractDatabaseTest {
         2 == Files.readAllLines(dbPath).size()
     }
 }
+
