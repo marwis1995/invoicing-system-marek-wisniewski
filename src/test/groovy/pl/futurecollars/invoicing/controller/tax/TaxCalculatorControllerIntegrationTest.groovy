@@ -1,92 +1,124 @@
 package pl.futurecollars.invoicing.controller.tax
 
+import org.springframework.http.MediaType
 import pl.futurecollars.invoicing.controller.AbstractControllerTest
-import spock.lang.Unroll
 
-@Unroll
-class TaxCalculatorControllerIntegrationTest extends AbstractControllerTest {
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import static pl.futurecollars.invoicing.helpers.TestHelpers.invoice
 
-    def "zeros are returned when there are no invoices in the system"() {
-        when:
-        def taxCalculatorResponse = calculateTax("0")
+class InvoiceControllerIntegrationTest extends AbstractControllerTest {
 
-        then:
-        taxCalculatorResponse.income == 0
-        taxCalculatorResponse.costs == 0
-        taxCalculatorResponse.earnings == 0
-        taxCalculatorResponse.incomingVat == 0
-        taxCalculatorResponse.outgoingVat == 0
-        taxCalculatorResponse.vatToReturn == 0
+    def "empty array is returned when no invoices were added"() {
+        expect:
+        getAllInvoices() == []
     }
 
-    def "zeros are returned when tax id is not matching"() {
-        given:
-        addUniqueInvoices(10)
-
-        when:
-        def taxCalculatorResponse = calculateTax("no_match")
-
-        then:
-        taxCalculatorResponse.income == 0
-        taxCalculatorResponse.costs == 0
-        taxCalculatorResponse.earnings == 0
-        taxCalculatorResponse.incomingVat == 0
-        taxCalculatorResponse.outgoingVat == 0
-        taxCalculatorResponse.vatToReturn == 0
+    def "add invoice returns sequential id"() {
+        expect:
+        def firstId = addInvoiceAndReturnId(invoice(1))
+        addInvoiceAndReturnId(invoice(2)) == firstId + 1
+        addInvoiceAndReturnId(invoice(3)) == firstId + 2
+        addInvoiceAndReturnId(invoice(4)) == firstId + 3
+        addInvoiceAndReturnId(invoice(5)) == firstId + 4
     }
 
-    def "sum of all products is returned when tax id is matching"() {
+    def "all invoices are returned when getting all invoices"() {
         given:
-        addUniqueInvoices(10)
+        def numberOfInvoices = 3
+        def expectedInvoices = addUniqueInvoices(numberOfInvoices)
 
         when:
-        def taxCalculatorResponse = calculateTax("5")
+        def invoices = getAllInvoices()
 
         then:
-        taxCalculatorResponse.income == 15000
-        taxCalculatorResponse.costs == 0
-        taxCalculatorResponse.earnings == 15000
-        taxCalculatorResponse.incomingVat == 1200.0
-        taxCalculatorResponse.outgoingVat == 0
-        taxCalculatorResponse.vatToReturn == 1200.0
-
-        when:
-        taxCalculatorResponse = calculateTax("10")
-
-        then:
-        taxCalculatorResponse.income == 55000
-        taxCalculatorResponse.costs == 0
-        taxCalculatorResponse.earnings == 55000
-        taxCalculatorResponse.incomingVat == 4400.0
-        taxCalculatorResponse.outgoingVat == 0
-        taxCalculatorResponse.vatToReturn == 4400.0
-
-        when:
-        taxCalculatorResponse = calculateTax("15")
-
-        then:
-        taxCalculatorResponse.income == 0
-        taxCalculatorResponse.costs == 15000
-        taxCalculatorResponse.earnings == -15000
-        taxCalculatorResponse.incomingVat == 0
-        taxCalculatorResponse.outgoingVat == 1200.0
-        taxCalculatorResponse.vatToReturn == -1200.0
+        invoices.size() == numberOfInvoices
+        invoices == expectedInvoices
     }
 
-    def "correct values are returned when company was buyer and seller"() {
+    def "correct invoice is returned when getting by id"() {
         given:
-        addUniqueInvoices(15) // sellers: 1-15, buyers: 10-25, 10-15 overlapping
+        def expectedInvoices = addUniqueInvoices(5)
+        def verifiedInvoice = expectedInvoices.get(2)
 
         when:
-        def taxCalculatorResponse = calculateTax("12")
+        def invoice = getInvoiceById(verifiedInvoice.getId())
 
         then:
-        taxCalculatorResponse.income == 78000
-        taxCalculatorResponse.costs == 3000
-        taxCalculatorResponse.earnings == 75000
-        taxCalculatorResponse.incomingVat == 6240.0
-        taxCalculatorResponse.outgoingVat == 240.0
-        taxCalculatorResponse.vatToReturn == 6000.0
+        invoice == verifiedInvoice
+    }
+
+    def "404 is returned when invoice id is not found when getting invoice by id [#id]"() {
+        given:
+        addUniqueInvoices(11)
+
+        expect:
+        mockMvc.perform(
+                get("$INVOICE_ENDPOINT/$id")
+        )
+                .andExpect(status().isNotFound())
+
+
+        where:
+        id << [-100, -2, -1, 0, 168, 1256]
+    }
+
+    def "404 is returned when invoice id is not found when deleting invoice [#id]"() {
+        given:
+        addUniqueInvoices(11)
+
+        expect:
+        mockMvc.perform(
+                delete("$INVOICE_ENDPOINT/$id")
+        )
+                .andExpect(status().isNotFound())
+
+
+        where:
+        id << [-100, -2, -1, 0, 12, 13, 99, 102, 1000]
+    }
+
+    def "404 is returned when invoice id is not found when updating invoice [#id]"() {
+        given:
+        addUniqueInvoices(11)
+
+        expect:
+        mockMvc.perform(
+                put("$INVOICE_ENDPOINT/$id")
+                        .content(invoiceAsJson(1))
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isNotFound())
+
+
+        where:
+        id << [-100, -2, -1, 0, 12, 13, 99, 102, 1000]
+    }
+
+    def "invoice date can be modified"() {
+        given:
+        def id = addInvoiceAndReturnId(invoice(44))
+        def updatedInvoice = invoice(123)
+        updatedInvoice.id = id
+
+        expect:
+        mockMvc.perform(
+                put("$INVOICE_ENDPOINT/$id")
+                        .content(jsonService.toJson(updatedInvoice))
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isNoContent())
+
+        getInvoiceById(id) == updatedInvoice
+    }
+
+    def "invoice can be deleted"() {
+        given:
+        def invoices = addUniqueInvoices(69)
+
+        expect:
+        invoices.each { invoice -> deleteInvoice(invoice.getId()) }
+        getAllInvoices().size() == 0
     }
 
 }
