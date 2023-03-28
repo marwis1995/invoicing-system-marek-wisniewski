@@ -16,3 +16,10 @@ logging:
       futurecollars:
         invoicing: INFO
         invoicing.db: DEBUG
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/invoicing
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
