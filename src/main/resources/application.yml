@@ -15,4 +15,4 @@ spring:
   profiles:
     active: sql
   flyway:
-    enabled: false
+    enabled: memory
