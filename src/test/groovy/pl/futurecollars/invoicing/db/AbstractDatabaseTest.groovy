@@ -96,4 +96,3 @@ abstract class AbstractDatabaseTest extends Specification {
     }
 
 }
-
