@@ -2,6 +2,7 @@ package pl.futurecollars.invoicing.service
 
 import pl.futurecollars.invoicing.db.Database
 import spock.lang.Specification
+
 import static pl.futurecollars.invoicing.helpers.TestHelpers.invoice
 
 class InvoiceServiceUnitTest extends Specification {
@@ -47,6 +48,7 @@ class InvoiceServiceUnitTest extends Specification {
     def "calling update() should delegate to database update() method"() {
         given:
         def invoice = invoice(1)
+        invoice.id = 1
         when:
         service.update(invoice.getId(), invoice)
         then:
