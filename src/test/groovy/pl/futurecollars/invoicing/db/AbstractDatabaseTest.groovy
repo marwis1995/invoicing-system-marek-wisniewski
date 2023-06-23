@@ -130,12 +130,12 @@ abstract class AbstractDatabaseTest extends Specification {
     }
 
     // resetting is necessary because database query returns ids while we don't know ids in original invoice
-    private static Invoice resetIds(Invoice invoice) {
-        invoice.getBuyer().id = null
-        invoice.getSeller().id = null
+    def Invoice resetIds(Invoice invoice) {
+        invoice.getBuyer().id = 0
+        invoice.getSeller().id = 0
         invoice.entries.forEach {
-            it.id = null
-            it.expenseRelatedToCar?.id = null
+            it.id = 0
+            it.expenseRelatedToCar?.id = 0
         }
         invoice
     }
