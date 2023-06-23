@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.bson.Document;
 import pl.futurecollars.invoicing.db.Database;
 import pl.futurecollars.invoicing.model.Invoice;
+
 @AllArgsConstructor
 public class MongoBasedDatabase implements Database {
 
